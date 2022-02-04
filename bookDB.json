@@ -1,0 +1,30 @@
+{
+    "bookDB": [{
+            "_name": "Durgesh",
+            "_phone": "+91-9898989898",
+            "_address": "gygyg",
+            "_city": "Jammu",
+            "_state": "Delhi",
+            "_zipcode": "67899",
+            "id": 1
+        },
+        {
+            "_name": "Shubham",
+            "_phone": "+91-9898989898",
+            "_address": "eqdweed",
+            "_city": "Dharamshala",
+            "_state": "Jammu And Kashmir",
+            "_zipcode": "1212",
+            "id": 2
+        },
+        {
+            "_name": "Julekha",
+            "_phone": "+91-9898989898",
+            "_address": "eeded",
+            "_city": "Dharamshala",
+            "_state": "Himachal Pradesh",
+            "_zipcode": "134003",
+            "id": 3
+        }
+    ]
+}
