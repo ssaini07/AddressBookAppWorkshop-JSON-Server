@@ -11,6 +11,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 function processAddressDataResponse() {
     document.querySelector('.person-count').textContent = addressBookList.length;
     createInnerHTML();
+    localStorage.removeItem("edit-person");
 }
 
 const getDataFromLocalStorage = () => {
@@ -24,7 +25,7 @@ const getAddressDataFromServer = () => {
     makeServiceCall("GET", Site_Properties.server_url, true) //When we performing GET operation this needs to be true
         .then(response => {
             addressBookList = JSON.parse(response);
-            console.log("Data Is getting: " + addressBookList);
+            //console.log("Data Is getting: " + addressBookList);
             processAddressDataResponse();
         })
         .catch(error => {
@@ -37,7 +38,7 @@ const getAddressDataFromServer = () => {
 // Section: 3 UC => 2 
 const createInnerHTML = () => {
 
-        const headerHtml = `<tr>
+    const headerHtml = `<tr>
     <th>Fullname</th>
     <th>Phone Number</th>
     <th>Address</th>
@@ -46,10 +47,10 @@ const createInnerHTML = () => {
     <th>Zipcode</th>
     <th>Actions</th>
 </tr>`;
-        if (addressBookList.length == 0) return;
-        let innerHtml = `${headerHtml}`;
-        for (const addressBookData of addressBookList) {
-            innerHtml = `${innerHtml}
+    if (addressBookList.length == 0) return;
+    let innerHtml = `${headerHtml}`;
+    for (const addressBookData of addressBookList) {
+        innerHtml = `${innerHtml}
 
 <tr>
     <td>${addressBookData._name}</td>
@@ -64,29 +65,40 @@ const createInnerHTML = () => {
     </td>
 </tr> 
     `;
-        }
-        document.querySelector('#display').innerHTML = innerHtml;
     }
-    /*
-    //Section: 2 UC => 5 Ability to Remove a Contact from the address book entries.
-    const remove = (data) => {
-        let bookData = addressBookList.find(personData => personData.id == data.id);
-        if (!bookData)
-            return;
-        const index = addressBookList.map(personData => personData.id).indexOf(bookData.id);
-        addressBookList.splice(index, 1);
-        localStorage.setItem('AddressBookList', JSON.stringify(addressBookList));
-        document.querySelector('.person-count').textContent = addressBookList.length;
-        createInnerHTML();
-        alert("Person address has been deleted successfully")
-    }
+    document.querySelector('#display').innerHTML = innerHtml;
+}
 
-    //Section: 3 UC => 4 Updating address book data on JSON server.
+//Section: 3 UC => 5 Ability to Remove a Contact from the address book entries.
+const remove = (data) => {
+    let bookData = addressBookList.find(personData => personData.id == data.id);
+    if (!bookData)
+        return;
+    const index = addressBookList.map(personData => personData.id).indexOf(bookData.id);
+    addressBookList.splice(index, 1);
+    if (Site_Properties.use_local_storage.match("true")) {
+        localStorage.setItem('AddressBookList', JSON.stringify(addressBookList));
+        createInnerHTML();
+    } else {
+        const deleteUrl = Site_Properties.server_url + bookData.id.toString();
+        makeServiceCall("DELETE", deleteUrl, true)
+            .then(responseText => {
+                console.log(responseText)
+                createInnerHTML();
+            })
+            .catch(error => {
+                console.log("Delete Error Status: " + JSON.stringify(error));
+                alert("Error while deleting " + error)
+            })
+    }
+}
+
+//Section: 3 UC => 4 Updating address book data on JSON server.
 const update = (data) => {
     let addBookData = addressBookList.find(personData => personData.id == data.id);
-    if (!addBookData)
+    if (!addBookData) {
         return;
+    }
     localStorage.setItem('edit-person', JSON.stringify(addBookData));
     window.location.replace(Site_Properties.addPerson);
 }
-*/

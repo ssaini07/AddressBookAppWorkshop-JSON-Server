@@ -90,16 +90,15 @@ function redirect() {
 const setAddressBookObject = () => {
 
     //Here we are directly store values in addressBookObject
-    // if (!isUpdate && Site_Properties.use_local_storage.match("true")) {
-    //     addressBookObject.id = createNewBookId();
-    // }
+    if (!isUpdate && Site_Properties.use_local_storage.match("true")) {
+        addressBookObject.id = createNewBookId();
+    }
     addressBookObject._name = getInputValueId('#name');
     addressBookObject._phone = getInputValueId('#phone');
     addressBookObject._address = getInputValueId('#address');
     addressBookObject._city = getInputValueId('#city');
     addressBookObject._state = getInputValueId('#state');
     addressBookObject._zipcode = getInputValueId('#zipcode');
-
 }
 
 const createNewBookId = () => {
@@ -130,7 +129,14 @@ const createAndUpdateStorage = () => {
 function createOrUpdateAddressInJsonServer() {
     let url = Site_Properties.server_url;
     let methodCall = "POST";
-    let message = "Data Stored with name: "; //replaced updated word with store
+    let message = "Data Stored with name: ";
+
+    //Section: 3 UC => 4 Updating data on JSON Server
+    if (isUpdate) {
+        methodCall = "PUT";
+        url = url + addressBookObject.id.toString();
+        message = "Data Updated with name: ";
+    }
 
     makeServiceCall(methodCall, url, true, addressBookObject)
         .then(response => {
@@ -158,30 +164,29 @@ const setValue = (id, value) => {
 
 //For redirecting to home page
 const cancel = () => {
-        window.location.replace(Site_Properties.home);
-    }
-    /*
-    //Section : 3 UC => 4 Updating address book data on JSON server 
-    const checkForUpdate = () => {
-        let jsonData = localStorage.getItem('edit-person');
-        isUpdate = jsonData ? true : false;
-        if (!isUpdate)
-            return;
-        addressBookObject = JSON.parse(jsonData);
-        setForm();
-    }
+    window.location.replace(Site_Properties.home);
+}
 
-    const setForm = () => {
-        setValue('#name', addressBookObject._name);
-        setValue('#phone', addressBookObject._phone);
-        setValue('#address', addressBookObject._address);
-        setValue('#city', addressBookObject._city);
-        setValue('#state', addressBookObject._state);
-        setValue('#zipcode', addressBookObject._zipcode);
-    }
+//Section : 3 UC => 4 Updating address book data on JSON server 
+const checkForUpdate = () => {
+    let jsonData = localStorage.getItem('edit-person');
+    isUpdate = jsonData ? true : false;
+    if (!isUpdate)
+        return;
+    addressBookObject = JSON.parse(jsonData);
+    setForm();
+}
 
-    const setValue = (id, value) => {
-        let element = document.querySelector(id);
-        element.value = value;
-    }
-    */
+const setForm = () => {
+    setValue('#name', addressBookObject._name);
+    setValue('#phone', addressBookObject._phone);
+    setValue('#address', addressBookObject._address);
+    setValue('#city', addressBookObject._city);
+    setValue('#state', addressBookObject._state);
+    setValue('#zipcode', addressBookObject._zipcode);
+}
+
+// const setValue = (id, value) => {
+//     let element = document.querySelector(id);
+//     element.value = value;
+// }
